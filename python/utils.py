@@ -13,3 +13,8 @@ def is_string(string):
 def is_regex(string):
     return re.match("/.*/", string)
 
+def is_variable(string):
+    return re.match("[a-zA-Z]+[a-zA-Z0-9]*", string)
+
+def print_context(context):
+    print(context)

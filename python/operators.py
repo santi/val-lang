@@ -3,9 +3,11 @@ import re
 class Operator:
 
     type = None
+    context = None  # Program context passed by reference
 
-    def __init__(self, type):
+    def __init__(self, type, context):
         self.type = type
+        self.context = context
 
     def apply(self, op1, op2):
         raise NotImplementedError("Must subclass Operator")
@@ -14,32 +16,37 @@ class Operator:
         return self.__str__()
 
     def __str__(self):
-        return f"Operator({str(self.type)})"
+        return f"op:{str(self.type)}"
 
-class OperatorLT(Operator):
+class LTOperator(Operator):
     def apply(self, op1, op2):
         print(f"Applying {op1} < {op2}")
         if not op1 < op2:
             raise ValueError
 
 
-class OperatorGT(Operator):
+class GTOperator(Operator):
     def apply(self, op1, op2):
         print(f"Applying {op1} > {op2}")
         if not op1 > op2:
             raise ValueError
 
 
-class OperatorRegex(Operator):
+class RegexOperator(Operator):
     def apply(self, op1, op2):
         print(f"Applying {op2} on {op1}")
-
-        
         if not re.match(op2.value, op1.value):
             raise ValueError
 
+
+class AssignOperator(Operator):
+    def apply(self, op1, op2):
+        print(f"Applying {op1} = {op2}")
+        self.context[op1.name] = op2
+
 operators = {
-    "<": OperatorLT,
-    ">": OperatorGT,
-    "~": OperatorRegex
+    "<": LTOperator,
+    ">": GTOperator,
+    "~": RegexOperator,
+    "=": AssignOperator
 }
